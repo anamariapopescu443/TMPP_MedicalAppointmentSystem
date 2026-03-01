@@ -2,6 +2,7 @@
 using MedicalAppointmentSystem.Services;
 using MedicalAppointmentSystem.Repositories;
 using MedicalAppointmentSystem.Interfaces;
+using MedicalAppointmentSystem.Factories;
 
 class Program
 {
@@ -10,7 +11,11 @@ class Program
         Doctor doctor = new Doctor(1, "Dr. Popescu", "Cardiology");
         Patient patient = new Patient(1, "Ana Maria", "123456789");
 
-        MedicalService service = new Consultation();
+        // ABSTRACT FACTORY
+        IClinicFactory clinicFactory = new PremiumClinicFactory();
+
+        MedicalService service = clinicFactory.CreateService();
+        INotificationService notification = clinicFactory.CreateNotificationService();
 
         Appointment appointment = new Appointment(
             1,
@@ -21,7 +26,6 @@ class Program
         );
 
         IAppointmentRepository repository = new AppointmentRepository();
-        INotificationService notification = new EmailNotificationService();
 
         AppointmentService appointmentService =
             new AppointmentService(repository, notification);
