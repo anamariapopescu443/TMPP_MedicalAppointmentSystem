@@ -1,41 +1,43 @@
-﻿using MedicalAppointmentSystem.Builder;
-using MedicalAppointmentSystem.Models;
-using MedicalAppointmentSystem.Prototype;
-using MedicalAppointmentSystem.Singleton;
+﻿using MedicalAppointmentSystem.Adapter;
+using MedicalAppointmentSystem.Composite;
+using MedicalAppointmentSystem.Facade;
 
 class Program
 {
     static void Main(string[] args)
     {
+        // ================= ADAPTER =================
+        OldEmailService oldService = new OldEmailService();
+        INotification adapter = new EmailAdapter(oldService);
 
-        // BUILDER
-        AppointmentBuilder builder = new AppointmentBuilder();
-        AppointmentDirector director = new AppointmentDirector();
-
-        director.BuildStandardAppointment(builder);
-
-        Appointment appointment = builder.GetAppointment();
-        appointment.ShowDetails();
+        adapter.Send("Programare nouă");
 
 
-        // PROTOTYPE
-        MedicalDocument doc1 = new MedicalDocument();
-        doc1.Title = "Medical Report";
-        doc1.Content = "Patient is healthy.";
+        // ================= COMPOSITE =================
+        var service1 = new MedicalServiceLeaf("Consultation");
+        var service2 = new MedicalServiceLeaf("Analysis");
 
-        MedicalDocument doc2 = (MedicalDocument)doc1.Clone();
-        doc2.Title = "Medical Report Copy";
+        var combo = new MedicalServiceComposite();
+        combo.Add(service1);
+        combo.Add(service2);
 
-        doc1.Show();
-        doc2.Show();
+        combo.ShowDetails();
 
 
-        // SINGLETON
-        DatabaseConnection db1 = DatabaseConnection.GetInstance();
-        DatabaseConnection db2 = DatabaseConnection.GetInstance();
+        // ================= FACADE =================
+        Console.WriteLine("\n================= FACADE =================");
 
-        db1.Connect();
+        AppointmentFacade facade = new AppointmentFacade();
 
-        Console.WriteLine(db1 == db2);
+        facade.CreateAppointment(
+            1,
+            "Ana Maria",
+            "060000000",
+            "Dr. Popescu",
+            "General Medicine",
+            "Consultation",
+            new DateTime(2026, 6, 10, 10, 30, 0),
+            true
+        );
     }
 }

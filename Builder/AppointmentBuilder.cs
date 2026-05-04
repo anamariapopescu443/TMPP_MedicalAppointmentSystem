@@ -4,7 +4,7 @@ namespace MedicalAppointmentSystem.Builder
 {
     public class AppointmentBuilder : IAppointmentBuilder
     {
-        private int id;
+        // private int id;
         private DateTime date;
         private Doctor? doctor;
         private Patient? patient;
