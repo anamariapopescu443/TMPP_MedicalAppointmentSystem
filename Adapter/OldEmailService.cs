@@ -2,9 +2,9 @@ namespace MedicalAppointmentSystem.Adapter
 {
     public class OldEmailService
     {
-        public void SendEmail(string text)
+        public void SendOldEmail(string message)
         {
-            Console.WriteLine("Old Email: " + text);
+            Console.WriteLine("Old Email: " + message);
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace MedicalAppointmentSystem.Adapter
 {
-    public interface INotification
+    public interface INotificationSender
     {
         void Send(string message);
     }

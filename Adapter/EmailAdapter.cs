@@ -1,17 +1,17 @@
 namespace MedicalAppointmentSystem.Adapter
 {
-    public class EmailAdapter : INotification
+    public class EmailAdapter : INotificationSender
     {
-        private OldEmailService oldService;
+        private readonly OldEmailService _oldEmailService;
 
-        public EmailAdapter(OldEmailService service)
+        public EmailAdapter(OldEmailService oldEmailService)
         {
-            oldService = service;
+            _oldEmailService = oldEmailService;
         }
 
         public void Send(string message)
         {
-            oldService.SendEmail(message);
+            _oldEmailService.SendOldEmail(message);
         }
     }
 }
