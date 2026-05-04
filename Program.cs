@@ -1,62 +1,69 @@
-﻿using MedicalAppointmentSystem.Flyweight;
-using MedicalAppointmentSystem.Decorator;
-using MedicalAppointmentSystem.Bridge;
-using MedicalAppointmentSystem.Proxy;
+﻿using MedicalAppointmentSystem.Strategy;
+using MedicalAppointmentSystem.Observer;
+using MedicalAppointmentSystem.Command;
+using MedicalAppointmentSystem.Memento;
+using MedicalAppointmentSystem.Iterator;
 
 class Program
 {
     static void Main()
     {
-        Console.WriteLine("================= FLYWEIGHT =================");
+        Console.WriteLine("================= STRATEGY =================");
 
-        var s1 = ServiceFactory.GetService("Consultation");
-        var s2 = ServiceFactory.GetService("Consultation");
+        var context = new NotificationContext();
+        context.SetStrategy(new EmailStrategy());
+        context.Execute("Appointment notification");
 
-        var a1 = new AppointmentFlyweight(1, s1);
-        var a2 = new AppointmentFlyweight(2, s2);
-
-        a1.Show();
-        a2.Show();
-
-        Console.WriteLine("Same instance: " + (s1 == s2));
+        context.SetStrategy(new SMSStrategy());
+        context.Execute("Appointment notification");
 
 
-        Console.WriteLine("\n================= DECORATOR =================");
+        Console.WriteLine("\n================= OBSERVER =================");
 
-        INotificationComponent notification = new BasicNotification();
-        notification = new EmailDecorator(notification);
-        notification = new SMSDecorator(notification);
-
-        notification.Send("Appointment created");
-
-
-        Console.WriteLine("\n================= BRIDGE =================");
-
-        INotificationChannel emailChannel = new EmailChannel();
-        AppointmentNotification confirmationByEmail = new ConfirmationNotification(emailChannel);
-
-        confirmationByEmail.Notify(
-            "Ana Maria",
-            "Dr. Popescu",
-            new DateTime(2026, 6, 10, 10, 30, 0)
-        );
-
-        INotificationChannel smsChannel = new SMSChannel();
-        AppointmentNotification reminderBySms = new ReminderNotification(smsChannel);
-
-        reminderBySms.Notify(
-            "Ana Maria",
-            "Dr. Popescu",
-            new DateTime(2026, 6, 10, 10, 30, 0)
-        );
+        var subject = new AppointmentSubject();
+        subject.Attach(new PatientObserver("Ana"));
+        subject.Attach(new PatientObserver("Ion"));
+        subject.Notify("New appointment created");
 
 
-        Console.WriteLine("\n================= PROXY =================");
+        Console.WriteLine("\n================= COMMAND =================");
 
-        var proxy1 = new AppointmentProxy("user");
-        proxy1.Access();
+        var invoker = new AppointmentInvoker();
+        invoker.SetCommand(new CreateAppointmentCommand());
+        invoker.Execute();
 
-        var proxy2 = new AppointmentProxy("admin");
-        proxy2.Access();
+
+        Console.WriteLine("\n================= MEMENTO =================");
+
+        var originator = new AppointmentOriginator();
+        var history = new AppointmentHistory();
+
+        originator.State = "Appointment created";
+        history.Save(originator.Save());
+
+        originator.State = "Appointment date changed";
+
+        var previousState = history.Undo();
+
+        if (previousState != null)
+        {
+            originator.Restore(previousState);
+        }
+
+        Console.WriteLine("Restored state: " + originator.State);
+
+
+        Console.WriteLine("\n================= ITERATOR =================");
+
+        var collection = new AppointmentCollection();
+        collection.Add("Appointment 1: Ana - Consultation");
+        collection.Add("Appointment 2: Ion - Surgery");
+
+        var iterator = collection.CreateIterator();
+
+        while (iterator.HasNext())
+        {
+            Console.WriteLine(iterator.Next());
+        }
     }
 }
