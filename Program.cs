@@ -1,35 +1,41 @@
-﻿using MedicalAppointmentSystem.Models;
-using MedicalAppointmentSystem.Services;
-using MedicalAppointmentSystem.Repositories;
-using MedicalAppointmentSystem.Interfaces;
-using MedicalAppointmentSystem.Factories;
+﻿using MedicalAppointmentSystem.Builder;
+using MedicalAppointmentSystem.Models;
+using MedicalAppointmentSystem.Prototype;
+using MedicalAppointmentSystem.Singleton;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Doctor doctor = new Doctor(1, "Dr. Popescu", "Cardiology");
-        Patient patient = new Patient(1, "Ana Maria", "123456789");
 
-        // ABSTRACT FACTORY
-        IClinicFactory clinicFactory = new PremiumClinicFactory();
+        // BUILDER
+        AppointmentBuilder builder = new AppointmentBuilder();
+        AppointmentDirector director = new AppointmentDirector();
 
-        MedicalService service = clinicFactory.CreateService();
-        INotificationService notification = clinicFactory.CreateNotificationService();
+        director.BuildStandardAppointment(builder);
 
-        Appointment appointment = new Appointment(
-            1,
-            DateTime.Now,
-            doctor,
-            patient,
-            service
-        );
+        Appointment appointment = builder.GetAppointment();
+        appointment.ShowDetails();
 
-        IAppointmentRepository repository = new AppointmentRepository();
 
-        AppointmentService appointmentService =
-            new AppointmentService(repository, notification);
+        // PROTOTYPE
+        MedicalDocument doc1 = new MedicalDocument();
+        doc1.Title = "Medical Report";
+        doc1.Content = "Patient is healthy.";
 
-        appointmentService.CreateAppointment(appointment);
+        MedicalDocument doc2 = (MedicalDocument)doc1.Clone();
+        doc2.Title = "Medical Report Copy";
+
+        doc1.Show();
+        doc2.Show();
+
+
+        // SINGLETON
+        DatabaseConnection db1 = DatabaseConnection.GetInstance();
+        DatabaseConnection db2 = DatabaseConnection.GetInstance();
+
+        db1.Connect();
+
+        Console.WriteLine(db1 == db2);
     }
 }

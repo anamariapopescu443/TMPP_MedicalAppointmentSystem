@@ -8,6 +8,8 @@ public class Appointment
     public Patient Patient { get; private set; }
     public MedicalService Service { get; private set; }
 
+    public bool Reminder { get; set; }
+
     public Appointment(int id, DateTime date,
                        Doctor doctor,
                        Patient patient,
@@ -18,5 +20,15 @@ public class Appointment
         Doctor = doctor;
         Patient = patient;
         Service = service;
+    }
+
+    public void ShowDetails()
+    {
+        Console.WriteLine($"Appointment ID: {Id}");
+        Console.WriteLine($"Date: {Date}");
+        Console.WriteLine($"Doctor: {Doctor.Name}");
+        Console.WriteLine($"Patient: {Patient.Name}");
+        Console.WriteLine($"Service: {Service.ServiceName}");
+        Console.WriteLine($"Reminder: {Reminder}");
     }
 }
