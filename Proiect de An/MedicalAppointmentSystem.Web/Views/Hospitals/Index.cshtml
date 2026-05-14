@@ -1,0 +1,51 @@
+@model List<MedicalAppointmentSystem.BusinessLogic.Patterns.Composite.IMedicalStructureComponent>
+
+<h2 class="page-title">Medical Institutions</h2>
+
+<p class="section-subtitle">
+    Browse hospitals, departments, and available medical services.
+</p>
+
+<div class="hospital-grid">
+    @foreach (var hospital in Model)
+    {
+        <div class="hospital-card">
+            <div class="hospital-header">
+                <div>
+                    <h4>@hospital.Name</h4>
+                    <span>@hospital.GetChildren().Count departments</span>
+                </div>
+
+                <div class="hospital-price">
+                    @hospital.GetTotalPrice() MDL
+                </div>
+            </div>
+
+            <div class="departments-grid">
+                @foreach (var department in hospital.GetChildren())
+                {
+                    <div class="department-card">
+                        <h5>@department.Name</h5>
+
+                        @if (!department.GetChildren().Any())
+                        {
+                            <p class="empty-service">No services available</p>
+                        }
+                        else
+                        {
+                            <div class="service-list">
+                                @foreach (var service in department.GetChildren())
+                                {
+                                    <div class="service-item">
+                                        <span>@service.Name</span>
+                                        <strong>@service.GetTotalPrice() MDL</strong>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,65 @@
+﻿<div class="auth-page">
+    <div class="auth-page-inner">
+        <h2 class="page-title">Login</h2>
+
+        <p class="section-subtitle">
+            Access your patient or doctor account.
+        </p>
+
+        <div class="auth-card">
+            <div class="auth-header">
+                <div>
+                    <h4>Welcome back</h4>
+                    <p>Login using your email and password.</p>
+                </div>
+
+                <div class="auth-icon">🔐</div>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">
+                    @ViewBag.Error
+                </div>
+            }
+
+            <form asp-action="Login" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input name="email" type="email" class="form-control" placeholder="example@email.com" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input name="password" type="password" class="form-control" placeholder="Enter password" required />
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        Login
+                    </button>
+
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary">
+                        Create Account
+                    </a>
+                </div>
+            </form>
+
+            <hr />
+
+            <div class="test-accounts">
+                <h5>Test accounts</h5>
+
+                <div class="test-account-item">
+                    <span>Patient</span>
+                    <strong>ana.popescu@example.com / 1234</strong>
+                </div>
+
+                <div class="test-account-item">
+                    <span>Doctor</span>
+                    <strong>elena.moraru@clinic.md / 1234</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

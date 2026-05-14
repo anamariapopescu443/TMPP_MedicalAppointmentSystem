@@ -1,0 +1,17 @@
+@model MedicalAppointmentSystem.Domain.Models.Appointment
+
+<h2 class="page-title">Delete Appointment</h2>
+
+<p>Are you sure you want to delete this appointment?</p>
+
+<p><strong>Patient ID:</strong> @Model.PatientId</p>
+<p><strong>Doctor ID:</strong> @Model.DoctorId</p>
+<p><strong>Date:</strong> @Model.AppointmentDate.ToString("yyyy-MM-dd HH:mm")</p>
+<p><strong>Reason:</strong> @Model.Reason</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

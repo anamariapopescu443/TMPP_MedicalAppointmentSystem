@@ -1,0 +1,51 @@
+﻿@model List<MedicalAppointmentSystem.Domain.Models.Notification>
+
+<h2 class="page-title">My Notifications</h2>
+
+<p class="section-subtitle">
+    View updates about your appointment status and doctor feedback.
+</p>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        You do not have notifications yet.
+    </div>
+}
+else
+{
+    <div class="notifications-list">
+        @foreach (var notification in Model)
+        {
+            <div class="notification-card">
+                <div class="notification-icon">
+                    🔔
+                </div>
+
+                <div class="notification-content">
+                    <div class="notification-header">
+                        <h5>Appointment Update</h5>
+                        <span>@notification.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
+                    </div>
+
+                    <p>
+                        @notification.Message
+                    </p>
+
+                    <a asp-controller="Appointments"
+                       asp-action="Details"
+                       asp-route-id="@notification.AppointmentId"
+                       class="btn btn-sm btn-outline-primary">
+                        View Appointment
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-controller="PatientDashboard" asp-action="Index" class="btn btn-outline-primary">
+        Back to Dashboard
+    </a>
+</div>

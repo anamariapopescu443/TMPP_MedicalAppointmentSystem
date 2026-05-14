@@ -1,0 +1,155 @@
+﻿@model MedicalAppointmentSystem.Domain.Models.Appointment
+
+<h2 class="page-title">Create Appointment</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+<div class="appointment-form-card">
+    <div class="appointment-form-header">
+        <div>
+            <h4>New medical appointment</h4>
+            <p>Select the institution, doctor, service and describe your request.</p>
+        </div>
+
+        <div class="appointment-form-icon">
+            🩺
+        </div>
+    </div>
+
+    <form asp-action="Create" method="post">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Hospital</label>
+                <select asp-for="HospitalId" asp-items="ViewBag.Hospitals" class="form-control" id="hospitalSelect" required>
+                    <option value="">-- Select hospital --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Department</label>
+                <select asp-for="DepartmentId" class="form-control" id="departmentSelect" required>
+                    <option value="">-- Select department --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Doctor</label>
+                <select asp-for="DoctorId" class="form-control" id="doctorSelect" required>
+                    <option value="">-- Select doctor --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Medical Service</label>
+                <select asp-for="MedicalServiceId" class="form-control" id="serviceSelect" required>
+                    <option value="">-- Select service --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Appointment Type</label>
+                <select asp-for="Type" class="form-control" required>
+                    <option value="Standard">Standard</option>
+                    <option value="Emergency">Emergency</option>
+                    <option value="FollowUp">Follow-up</option>
+                    <option value="Online">Online</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Appointment Date</label>
+                <input asp-for="AppointmentDate" type="datetime-local" class="form-control" required />
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Reason</label>
+                <textarea asp-for="Reason"
+                          class="form-control"
+                          rows="5"
+                          placeholder="Describe your symptoms or the reason for this appointment..."
+                          required></textarea>
+            </div>
+        </div>
+
+        <div class="appointment-form-actions">
+            <button type="submit" class="btn btn-success">
+                Create Appointment
+            </button>
+
+            <a asp-action="Index" class="btn abc">
+                Back
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const hospitalSelect = document.getElementById("hospitalSelect");
+        const departmentSelect = document.getElementById("departmentSelect");
+        const doctorSelect = document.getElementById("doctorSelect");
+        const serviceSelect = document.getElementById("serviceSelect");
+
+        hospitalSelect.addEventListener("change", async function () {
+            const hospitalId = this.value;
+
+            departmentSelect.innerHTML = '<option value="">-- Select department --</option>';
+            doctorSelect.innerHTML = '<option value="">-- Select doctor --</option>';
+            serviceSelect.innerHTML = '<option value="">-- Select service --</option>';
+
+            if (!hospitalId) return;
+
+            const response = await fetch(`/Appointments/GetDepartmentsByHospital?hospitalId=${hospitalId}`);
+            const departments = await response.json();
+
+            departments.forEach(department => {
+                const option = document.createElement("option");
+                option.value = department.id;
+                option.textContent = department.name;
+                departmentSelect.appendChild(option);
+            });
+        });
+
+        departmentSelect.addEventListener("change", async function () {
+            const departmentId = this.value;
+
+            doctorSelect.innerHTML = '<option value="">-- Select doctor --</option>';
+            serviceSelect.innerHTML = '<option value="">-- Select service --</option>';
+
+            if (!departmentId) return;
+
+            const doctorsResponse = await fetch(`/Appointments/GetDoctorsByDepartment?departmentId=${departmentId}`);
+            const doctors = await doctorsResponse.json();
+
+            doctors.forEach(doctor => {
+                const option = document.createElement("option");
+                option.value = doctor.id;
+                option.textContent = doctor.name;
+                doctorSelect.appendChild(option);
+            });
+
+            const servicesResponse = await fetch(`/Appointments/GetServicesByDepartment?departmentId=${departmentId}`);
+            const services = await servicesResponse.json();
+
+            services.forEach(service => {
+                const option = document.createElement("option");
+                option.value = service.id;
+                option.textContent = service.name;
+                serviceSelect.appendChild(option);
+            });
+        });
+
+        const dateInput = document.querySelector('input[name="AppointmentDate"]');
+
+        if (dateInput) {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            dateInput.min = now.toISOString().slice(0, 16);
+        }
+    </script>
+}

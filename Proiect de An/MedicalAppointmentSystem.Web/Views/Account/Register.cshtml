@@ -1,0 +1,149 @@
+﻿<div class="auth-page">
+    <div class="auth-page-inner auth-page-inner-wide">
+        <h2 class="page-title">Register</h2>
+
+        <p class="section-subtitle">
+            Create a new account as a patient or doctor.
+        </p>
+
+        <div class="auth-card auth-card-wide">
+            <div class="auth-header">
+                <div>
+                    <h4>Create account</h4>
+                    <p>Choose your role and complete the registration form.</p>
+                </div>
+
+                <div class="auth-icon">📝</div>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">
+                    @ViewBag.Error
+                </div>
+            }
+
+            <form asp-action="Register" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Register as</label>
+                    <select name="role" id="roleSelect" class="form-control" required>
+                        <option value="">-- Select role --</option>
+                        <option value="Patient">Patient</option>
+                        <option value="Doctor">Doctor</option>
+                    </select>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <input name="firstName" class="form-control" placeholder="First name" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <input name="lastName" class="form-control" placeholder="Last name" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input name="email" type="email" class="form-control" placeholder="example@email.com" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input name="phoneNumber" class="form-control" placeholder="060000000" required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">IDNP</label>
+                        <input name="idnp" class="form-control" placeholder="13 digits IDNP" required />
+                    </div>
+
+                    <div class="col-md-6" id="dateOfBirthBlock">
+                        <label class="form-label">Date of Birth</label>
+                        <input name="dateOfBirth" type="date" class="form-control" />
+                    </div>
+
+                    <div class="col-12" id="doctorFields" style="display:none;">
+                        <div class="doctor-register-box">
+                            <h5>Doctor information</h5>
+                            <p>Choose the hospital and department where you work.</p>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Hospital</label>
+                                    <select name="hospitalId" id="hospitalSelect" asp-items="ViewBag.Hospitals" class="form-control">
+                                        <option value="">-- Select hospital --</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Department</label>
+                                    <select name="departmentId" id="departmentSelect" class="form-control">
+                                        <option value="">-- Select department --</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label class="form-label">Specialization</label>
+                                    <input name="specialization" class="form-control" placeholder="Example: Cardiologist" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Password</label>
+                        <input name="password" type="password" class="form-control" placeholder="Create password" required />
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap mt-4">
+                    <button type="submit" class="btn btn-success">
+                        Register
+                    </button>
+
+                    <a asp-controller="Account" asp-action="Login" class="btn abc">
+                        Back to Login
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const roleSelect = document.getElementById("roleSelect");
+        const doctorFields = document.getElementById("doctorFields");
+        const hospitalSelect = document.getElementById("hospitalSelect");
+        const departmentSelect = document.getElementById("departmentSelect");
+
+        roleSelect.addEventListener("change", function () {
+            if (this.value === "Doctor") {
+                doctorFields.style.display = "block";
+            } else {
+                doctorFields.style.display = "none";
+                departmentSelect.innerHTML = '<option value="">-- Select department --</option>';
+            }
+        });
+
+        hospitalSelect.addEventListener("change", async function () {
+            const hospitalId = this.value;
+
+            departmentSelect.innerHTML = '<option value="">-- Select department --</option>';
+
+            if (!hospitalId) return;
+
+            const response = await fetch(`/Account/GetDepartmentsByHospital?hospitalId=${hospitalId}`);
+            const departments = await response.json();
+
+            departments.forEach(department => {
+                const option = document.createElement("option");
+                option.value = department.id;
+                option.textContent = department.name;
+                departmentSelect.appendChild(option);
+            });
+        });
+    </script>
+}

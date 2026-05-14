@@ -1,0 +1,154 @@
+﻿@using MedicalAppointmentSystem.Domain.Models
+
+@{
+    var nextAppointment = ViewBag.NextAppointment as Appointment;
+}
+
+<h2 class="page-title">Doctor Dashboard</h2>
+
+<div class="dashboard-hero doctor-hero mb-4">
+    <div>
+        <h3>Welcome back, @ViewBag.FullName</h3>
+        <p>
+            @ViewBag.Specialization · @ViewBag.DepartmentName · @ViewBag.HospitalName
+        </p>
+    </div>
+
+    <a asp-controller="Appointments" asp-action="Index" class="btn btn-light">
+        View Requests
+    </a>
+</div>
+
+<div class="dashboard-stats-grid mb-4">
+    <div class="dashboard-stat-card">
+        <span>Total</span>
+        <strong>@ViewBag.TotalRequests</strong>
+        <p>Appointment requests</p>
+    </div>
+
+    <div class="dashboard-stat-card warning">
+        <span>Pending</span>
+        <strong>@ViewBag.PendingRequests</strong>
+        <p>Awaiting response</p>
+    </div>
+
+    <div class="dashboard-stat-card primary">
+        <span>Confirmed</span>
+        <strong>@ViewBag.ConfirmedRequests</strong>
+        <p>Accepted appointments</p>
+    </div>
+
+    <div class="dashboard-stat-card success">
+        <span>Completed</span>
+        <strong>@ViewBag.CompletedRequests</strong>
+        <p>Finished consultations</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="dashboard-info-card h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h4>Today</h4>
+                    <p class="text-muted mb-0">Appointments scheduled for today.</p>
+                </div>
+                <span class="info-icon">📅</span>
+            </div>
+
+            <hr />
+
+            <h2 class="dashboard-big-number">@ViewBag.TodayAppointments</h2>
+
+            <a asp-controller="Appointments" asp-action="Index" asp-route-filter="today" class="btn btn-outline-primary btn-sm">
+                View Today
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-info-card h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h4>Tomorrow</h4>
+                    <p class="text-muted mb-0">Appointments scheduled for tomorrow.</p>
+                </div>
+                <span class="info-icon">🕒</span>
+            </div>
+
+            <hr />
+
+            <h2 class="dashboard-big-number">@ViewBag.TomorrowAppointments</h2>
+
+            <a asp-controller="Appointments" asp-action="Index" asp-route-filter="tomorrow" class="btn btn-outline-primary btn-sm">
+                View Tomorrow
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-info-card h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h4>Next Appointment</h4>
+                    <p class="text-muted mb-0">Nearest upcoming request.</p>
+                </div>
+                <span class="info-icon">🩺</span>
+            </div>
+
+            <hr />
+
+            @if (nextAppointment == null)
+            {
+                <div class="empty-state">
+                    No upcoming appointment found.
+                </div>
+            }
+            else
+            {
+                <p><strong>Patient:</strong> @nextAppointment.Patient?.FullName</p>
+                <p><strong>Service:</strong> @nextAppointment.MedicalService?.Name</p>
+                <p><strong>Date:</strong> @nextAppointment.AppointmentDate.ToString("yyyy-MM-dd HH:mm")</p>
+
+                <a asp-controller="Appointments" asp-action="Details" asp-route-id="@nextAppointment.Id" class="btn btn-outline-primary btn-sm">
+                    View Details
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="dashboard-action-card h-100">
+            <div class="action-icon">📋</div>
+            <h5>Appointment Requests</h5>
+            <p>View and manage all appointment requests assigned to you.</p>
+            <a asp-controller="Appointments" asp-action="Index" class="btn btn-primary w-100">
+                View Requests
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-action-card h-100">
+            <div class="action-icon">✅</div>
+            <h5>Confirmed Appointments</h5>
+            <p>View accepted appointments and complete consultations.</p>
+            <a asp-controller="Appointments" asp-action="Index" asp-route-filter="confirmed" class="btn btn-outline-primary w-100">
+                View Confirmed
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-action-card h-100">
+            <div class="action-icon">👤</div>
+            <h5>Profile</h5>
+            <p>Edit your hospital, department, specialization and contact information.</p>
+            <a asp-controller="DoctorProfile" asp-action="Index" class="btn btn-outline-primary w-100">
+                Open Profile
+            </a>
+        </div>
+    </div>
+</div>

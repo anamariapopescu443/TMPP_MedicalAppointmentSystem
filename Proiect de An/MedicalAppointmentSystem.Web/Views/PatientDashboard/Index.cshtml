@@ -1,0 +1,167 @@
+﻿@using MedicalAppointmentSystem.Domain.Models
+
+@{
+    var nextAppointment = ViewBag.NextAppointment as Appointment;
+    var lastCompletedAppointment = ViewBag.LastCompletedAppointment as Appointment;
+    var hasMedicalCard = ViewBag.HasMedicalCard as bool? ?? false;
+}
+
+<h2 class="page-title">Patient Dashboard</h2>
+
+<div class="dashboard-hero mb-4">
+    <div>
+        <h3>Welcome back, @ViewBag.FullName</h3>
+        <p>Track your appointments, medical history and profile information from one place.</p>
+    </div>
+
+    <a asp-controller="Appointments" asp-action="Create" class="btn btn-light aa">
+        Create Appointment
+    </a>
+</div>
+
+<div class="dashboard-stats-grid mb-4">
+    <div class="dashboard-stat-card">
+        <span>Total</span>
+        <strong>@ViewBag.TotalAppointments</strong>
+        <p>Appointments</p>
+    </div>
+
+    <div class="dashboard-stat-card warning">
+        <span>Pending</span>
+        <strong>@ViewBag.PendingAppointments</strong>
+        <p>Awaiting doctor response</p>
+    </div>
+
+    <div class="dashboard-stat-card primary">
+        <span>Confirmed</span>
+        <strong>@ViewBag.ConfirmedAppointments</strong>
+        <p>Accepted appointments</p>
+    </div>
+
+    <div class="dashboard-stat-card success">
+        <span>Completed</span>
+        <strong>@ViewBag.CompletedAppointments</strong>
+        <p>Finished consultations</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="dashboard-info-card h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h4>Next Appointment</h4>
+                    <p class="text-muted mb-0">Your nearest upcoming appointment.</p>
+                </div>
+                <span class="info-icon">📅</span>
+            </div>
+
+            <hr />
+
+            @if (nextAppointment == null)
+            {
+                <div class="empty-state">
+                    No upcoming appointment found.
+                </div>
+            }
+            else
+            {
+                <p><strong>Doctor:</strong> @nextAppointment.Doctor?.FullName</p>
+                <p><strong>Department:</strong> @nextAppointment.Department?.Name</p>
+                <p><strong>Service:</strong> @nextAppointment.MedicalService?.Name</p>
+                <p><strong>Date:</strong> @nextAppointment.AppointmentDate.ToString("yyyy-MM-dd HH:mm")</p>
+
+                <a asp-controller="Appointments" asp-action="Details" asp-route-id="@nextAppointment.Id" class="btn btn-outline-primary btn-sm">
+                    View Details
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="dashboard-info-card h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h4>Last Completed Appointment</h4>
+                    <p class="text-muted mb-0">Most recent completed medical consultation.</p>
+                </div>
+                <span class="info-icon">✅</span>
+            </div>
+
+            <hr />
+
+            @if (lastCompletedAppointment == null)
+            {
+                <div class="empty-state">
+                    No completed appointment yet.
+                </div>
+            }
+            else
+            {
+                <p><strong>Doctor:</strong> @lastCompletedAppointment.Doctor?.FullName</p>
+                <p><strong>Service:</strong> @lastCompletedAppointment.MedicalService?.Name</p>
+                <p><strong>Comment:</strong> @lastCompletedAppointment.DoctorComment</p>
+                <p><strong>Completed:</strong> @(lastCompletedAppointment.CompletedAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")</p>
+
+                <a asp-controller="Appointments" asp-action="Details" asp-route-id="@lastCompletedAppointment.Id" class="btn btn-outline-primary btn-sm">
+                    View Details
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="dashboard-action-card h-100">
+            <div class="action-icon">🩺</div>
+            <h5>Make Appointment</h5>
+            <p>Create a new medical appointment request.</p>
+            <a asp-controller="Appointments" asp-action="Create" class="btn btn-primary w-100">
+                Create Appointment
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="dashboard-action-card h-100">
+            <div class="action-icon">📋</div>
+            <h5>Appointment History</h5>
+            <p>View appointment statuses and doctor comments.</p>
+            <a asp-controller="Appointments" asp-action="Index" class="btn btn-outline-primary w-100">
+                View History
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="dashboard-action-card h-100">
+            <div class="action-icon">🔔</div>
+            <h5>Notifications</h5>
+            <p>View updates about appointment changes.</p>
+            <a asp-controller="Notifications" asp-action="Index" class="btn btn-warning w-100">
+                View Notifications
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="dashboard-action-card h-100">
+            <div class="action-icon">👤</div>
+            <h5>Profile</h5>
+            <p>
+                @if (hasMedicalCard)
+                {
+                    <span>Medical card uploaded.</span>
+                }
+                else
+                {
+                    <span>Upload your medical card.</span>
+                }
+            </p>
+            <a asp-controller="PatientProfile" asp-action="Index" class="btn abd w-100">
+                Open Profile
+            </a>
+        </div>
+    </div>
+</div>

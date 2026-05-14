@@ -1,0 +1,133 @@
+﻿@model MedicalAppointmentSystem.Domain.Models.Doctor
+
+<h2 class="page-title">Doctor Profile</h2>
+
+<p class="section-subtitle">
+    Manage your professional profile, hospital, department and contact information.
+</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+<div class="profile-header-card doctor-profile-header mb-4">
+    <div class="profile-avatar">
+        @Model.FirstName.Substring(0, 1)@Model.LastName.Substring(0, 1)
+    </div>
+
+    <div>
+        <h3>Dr. @Model.FullName</h3>
+        <p>@Model.Specialization · @Model.Department?.Name · @Model.Hospital?.Name</p>
+    </div>
+</div>
+
+<div class="profile-card">
+    <div class="profile-card-header">
+        <div>
+            <h4>Professional Information</h4>
+            <p>Update your personal details and medical institution assignment.</p>
+        </div>
+
+        <span class="profile-card-icon">🩺</span>
+    </div>
+
+    <form asp-action="UpdateProfile" method="post">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">First Name</label>
+                <input name="firstName" value="@Model.FirstName" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Last Name</label>
+                <input name="lastName" value="@Model.LastName" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input name="email" value="@Model.Email" type="email" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Phone Number</label>
+                <input name="phoneNumber" value="@Model.PhoneNumber" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">IDNP</label>
+                <input name="idnp" value="@Model.IDNP" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Specialization</label>
+                <input name="specialization" value="@Model.Specialization" class="form-control" required />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Hospital</label>
+                <select name="hospitalId" id="hospitalSelect" asp-items="ViewBag.Hospitals" class="form-control" required>
+                    <option value="">-- Select hospital --</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Department</label>
+                <select name="departmentId" id="departmentSelect" class="form-control" required>
+                    <option value="">-- Select department --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="profile-actions mt-4">
+            <button type="submit" class="btn btn-success">
+                Save Changes
+            </button>
+
+            <a asp-controller="DoctorDashboard" asp-action="Index" class="btn abc">
+                Back to Dashboard
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const hospitalSelect = document.getElementById("hospitalSelect");
+        const departmentSelect = document.getElementById("departmentSelect");
+
+        const currentHospitalId = "@Model.HospitalId";
+        const currentDepartmentId = "@Model.DepartmentId";
+
+        hospitalSelect.value = currentHospitalId;
+
+        async function loadDepartments(hospitalId, selectedDepartmentId = null) {
+            departmentSelect.innerHTML = '<option value="">-- Select department --</option>';
+
+            if (!hospitalId) return;
+
+            const response = await fetch(`/DoctorProfile/GetDepartmentsByHospital?hospitalId=${hospitalId}`);
+            const departments = await response.json();
+
+            departments.forEach(department => {
+                const option = document.createElement("option");
+                option.value = department.id;
+                option.textContent = department.name;
+
+                if (selectedDepartmentId && department.id.toString() === selectedDepartmentId.toString()) {
+                    option.selected = true;
+                }
+
+                departmentSelect.appendChild(option);
+            });
+        }
+
+        hospitalSelect.addEventListener("change", async function () {
+            await loadDepartments(this.value);
+        });
+
+        loadDepartments(currentHospitalId, currentDepartmentId);
+    </script>
+}

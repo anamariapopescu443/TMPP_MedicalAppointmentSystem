@@ -1,0 +1,20 @@
+using MedicalAppointmentSystem.Domain.Enums;
+
+namespace MedicalAppointmentSystem.Domain.Models;
+
+public class Hospital
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; } = string.Empty;
+
+    public string Address { get; set; } = string.Empty;
+
+    public string PhoneNumber { get; set; } = string.Empty;
+
+    public string Description { get; set; } = string.Empty;
+
+    public HospitalType Type { get; set; } = HospitalType.PublicHospital;
+
+    public ICollection<Department> Departments { get; set; } = new List<Department>();
+}

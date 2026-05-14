@@ -1,0 +1,90 @@
+@model MedicalAppointmentSystem.Domain.Models.Appointment
+@using MedicalAppointmentSystem.Domain.Enums
+
+<h2 class="page-title">Appointment Details</h2>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <strong>Appointment #@Model.Id</strong>
+        <span class="badge bg-primary float-end">@Model.Status</span>
+    </div>
+
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <h5>Patient Information</h5>
+                <p><strong>Name:</strong> @Model.Patient?.FullName</p>
+                <p><strong>Email:</strong> @Model.Patient?.Email</p>
+                <p><strong>Phone:</strong> @Model.Patient?.PhoneNumber</p>
+            </div>
+
+            <div class="col-md-6">
+                <h5>Doctor Information</h5>
+                <p><strong>Name:</strong> @Model.Doctor?.FullName</p>
+                <p><strong>Specialization:</strong> @Model.Doctor?.Specialization</p>
+                <p><strong>Email:</strong> @Model.Doctor?.Email</p>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <h5>Medical Institution</h5>
+                <p><strong>Hospital:</strong> @Model.Hospital?.Name</p>
+                <p><strong>Hospital Type:</strong> @Model.Hospital?.Type</p>
+                <p><strong>Department:</strong> @Model.Department?.Name</p>
+            </div>
+
+            <div class="col-md-6">
+                <h5>Medical Service</h5>
+                <p><strong>Service:</strong> @Model.MedicalService?.Name</p>
+                <p><strong>Price:</strong> @Model.MedicalService?.Price MDL</p>
+                <p><strong>Duration:</strong> @Model.MedicalService?.DurationMinutes minutes</p>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <h5>Appointment Information</h5>
+                <p><strong>Date:</strong> @Model.AppointmentDate.ToString("yyyy-MM-dd HH:mm")</p>
+                <p><strong>Type:</strong> @Model.Type</p>
+                <p><strong>Status:</strong> @Model.Status</p>
+                <p><strong>Created At:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</p>
+
+                @if (Model.CompletedAt != null)
+                {
+                    <p><strong>Completed At:</strong> @Model.CompletedAt?.ToString("yyyy-MM-dd HH:mm")</p>
+                }
+            </div>
+
+            <div class="col-md-6">
+                <h5>Reason and Comments</h5>
+                <p><strong>Patient Reason:</strong></p>
+                <div class="alert alert-light border">
+                    @Model.Reason
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.DoctorComment))
+                {
+                    <p><strong>Doctor Comment:</strong></p>
+                    <div class="alert alert-info">
+                        @Model.DoctorComment
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.DeclineReason))
+                {
+                    <p><strong>Decline Reason:</strong></p>
+                    <div class="alert alert-danger">
+                        @Model.DeclineReason
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-primary">Back</a>
